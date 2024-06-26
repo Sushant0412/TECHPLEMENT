@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { fetchOneQuote, fetchAuthorQuotes } from "../backend/api.js";
+import axios from "axios";
 
 export default function App() {
   const [quote, setQuote] = useState({ quote: "", author: "" });
@@ -12,8 +12,10 @@ export default function App() {
     setLoading(true);
     setError("");
     try {
-      const fetchedQuote = await fetchOneQuote();
-      setQuote(fetchedQuote);
+      const res = await axios.get("https://api.api-ninjas.com/v1/quotes", {
+        headers: { "X-Api-Key": "UA31UHAU/g08pyyIr/RkKA==MtQNgUEwQ07Qhdjn" },
+      });
+      setQuote(res.data[0]); // Assuming data is an array of quotes, set the first one
     } catch (err) {
       setError("Failed to fetch or save quote.");
       console.error(err);
@@ -28,12 +30,12 @@ export default function App() {
     setError("");
     try {
       if (author.trim() !== "") {
-        const quotes = await fetchAuthorQuotes(author);
-        if (quotes.length > 0) {
-          setAuthorQuotes(quotes);
-        } else {
-          setAuthorQuotes([]);
-          setError("No quotes found for the author.");
+        const res = await axios.post("http://localhost:5000/quotes/author", {
+          author,
+        });
+        setAuthorQuotes(res.data);
+        if (res.data.length === 0) {
+          setError(`No quotes found for "${author}".`);
         }
       } else {
         setError("Please enter an author name.");
