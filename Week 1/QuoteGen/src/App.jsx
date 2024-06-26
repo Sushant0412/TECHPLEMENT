@@ -7,7 +7,6 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [author, setAuthor] = useState("");
   const [error, setError] = useState("");
-  const [lastQuote, setLastQuote] = useState(null); // State to store last fetched quote
 
   const getOneQuote = async () => {
     setLoading(true);
@@ -15,7 +14,6 @@ export default function App() {
     try {
       const res = await axios.get("https://api.quotable.io/random");
       setQuote({ content: res.data.content, author: res.data.author });
-      setLastQuote({ content: res.data.content, author: res.data.author }); // Save the last quote
     } catch (err) {
       setError("Failed to fetch or save quote.");
       console.error(err);
@@ -31,13 +29,16 @@ export default function App() {
     try {
       if (author.trim() !== "") {
         const encodedAuthor = encodeURIComponent(author.trim());
-        const res = await axios.get(`https://api.quotable.io/quotes?author=${encodedAuthor}`);
+        const res = await axios.get(
+          `https://api.quotable.io/quotes?author=${encodedAuthor}`
+        );
         setAuthorQuotes(res.data.results);
         if (res.data.results.length === 0) {
           setError(`No quotes found for "${author}".`);
-        } else {
-          setLastQuote(null); // Clear last fetched quote if new search returns results
         }
+        // Clear the single quote state to prevent showing random quote after search
+        setAuthor("");
+        setQuote({ content: "", author: "" });
       } else {
         setError("Please enter an author name.");
       }
@@ -46,6 +47,15 @@ export default function App() {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGenerateClick = () => {
+    setAuthorQuotes([]); // Clear authorQuotes array
+    if (author.trim() === "") {
+      getOneQuote();
+    } else {
+      setQuote({ content: "", author: "" }); // Reset to empty to trigger random quote fetch
     }
   };
 
@@ -61,7 +71,7 @@ export default function App() {
         />
         <button type="submit">Search</button>
       </form>
-      <button onClick={getOneQuote} disabled={loading}>
+      <button onClick={handleGenerateClick} disabled={loading}>
         Generate
       </button>
       {loading ? (
