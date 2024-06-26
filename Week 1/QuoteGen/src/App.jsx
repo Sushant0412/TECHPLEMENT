@@ -1,24 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 
 export default function App() {
-  const [quote, setQuote] = useState({ quote: "", author: "" });
+  const [quote, setQuote] = useState({ content: "", author: "" });
   const [authorQuotes, setAuthorQuotes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [author, setAuthor] = useState("");
   const [error, setError] = useState("");
   const [lastQuote, setLastQuote] = useState(null); // State to store last fetched quote
 
-
   const getOneQuote = async () => {
     setLoading(true);
     setError("");
     try {
-      const res = await axios.get("https://api.api-ninjas.com/v1/quotes", {
-        headers: { "X-Api-Key": "UA31UHAU/g08pyyIr/RkKA==MtQNgUEwQ07Qhdjn" },
-      });
-      setQuote(res.data[0]); // Assuming data is an array of quotes, set the first one
-      setLastQuote(res.data[0]); // Save the last quote
+      const res = await axios.get("https://api.quotable.io/random");
+      setQuote({ content: res.data.content, author: res.data.author });
+      setLastQuote({ content: res.data.content, author: res.data.author }); // Save the last quote
     } catch (err) {
       setError("Failed to fetch or save quote.");
       console.error(err);
@@ -33,11 +30,10 @@ export default function App() {
     setError("");
     try {
       if (author.trim() !== "") {
-        const res = await axios.post("http://localhost:5000/quotes/author", {
-          author,
-        });
-        setAuthorQuotes(res.data);
-        if (res.data.length === 0) {
+        const encodedAuthor = encodeURIComponent(author.trim());
+        const res = await axios.get(`https://api.quotable.io/quotes?author=${encodedAuthor}`);
+        setAuthorQuotes(res.data.results);
+        if (res.data.results.length === 0) {
           setError(`No quotes found for "${author}".`);
         } else {
           setLastQuote(null); // Clear last fetched quote if new search returns results
@@ -74,20 +70,18 @@ export default function App() {
         <p>{error}</p>
       ) : authorQuotes.length > 0 ? (
         <div>
-          {authorQuotes.map((q, index) => (
-            <div key={index}>
-              <div>{q.quote}</div>
+          {authorQuotes.map((q) => (
+            <div key={q._id}>
+              <div>{q.content}</div>
               <p>{q.author}</p>
             </div>
           ))}
         </div>
-      ) : lastQuote ? (
-        <div>
-          <div>{lastQuote.quote}</div>
-          <p>{lastQuote.author}</p>
-        </div>
       ) : (
-        <p>Press Generate to start</p> // Empty placeholder if neither authorQuotes nor lastQuote is available
+        <div>
+          <div>{quote.content}</div>
+          <p>{quote.author}</p>
+        </div>
       )}
     </div>
   );
