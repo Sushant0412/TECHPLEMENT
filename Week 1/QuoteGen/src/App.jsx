@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 export default function App() {
@@ -7,6 +7,8 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [author, setAuthor] = useState("");
   const [error, setError] = useState("");
+  const [lastQuote, setLastQuote] = useState(null); // State to store last fetched quote
+
 
   const getOneQuote = async () => {
     setLoading(true);
@@ -16,6 +18,7 @@ export default function App() {
         headers: { "X-Api-Key": "UA31UHAU/g08pyyIr/RkKA==MtQNgUEwQ07Qhdjn" },
       });
       setQuote(res.data[0]); // Assuming data is an array of quotes, set the first one
+      setLastQuote(res.data[0]); // Save the last quote
     } catch (err) {
       setError("Failed to fetch or save quote.");
       console.error(err);
@@ -36,6 +39,8 @@ export default function App() {
         setAuthorQuotes(res.data);
         if (res.data.length === 0) {
           setError(`No quotes found for "${author}".`);
+        } else {
+          setLastQuote(null); // Clear last fetched quote if new search returns results
         }
       } else {
         setError("Please enter an author name.");
@@ -76,13 +81,13 @@ export default function App() {
             </div>
           ))}
         </div>
-      ) : author.trim() !== "" ? (
-        <p>No quotes found for "{author}"</p>
-      ) : (
+      ) : lastQuote ? (
         <div>
-          <div>{quote.quote}</div>
-          <p>{quote.author}</p>
+          <div>{lastQuote.quote}</div>
+          <p>{lastQuote.author}</p>
         </div>
+      ) : (
+        <p>Press Generate to start</p> // Empty placeholder if neither authorQuotes nor lastQuote is available
       )}
     </div>
   );
