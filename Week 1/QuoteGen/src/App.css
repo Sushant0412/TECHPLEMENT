@@ -1,0 +1,146 @@
+body {
+  font-family: "Playwrite DE Grund", "sans-serif";
+  margin: 0px;
+  padding: 0px;
+  background-color: #e0fbe2;
+}
+
+.gen-btn {
+  outline: none;
+  cursor: pointer;
+  border: none;
+  padding: 0.9rem 2rem;
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  position: relative;
+  display: inline-block;
+  letter-spacing: 0.05rem;
+  font-weight: 700;
+  font-size: 17px;
+  border-radius: 500px;
+  overflow: hidden;
+  background: #66ff66;
+  color: ghostwhite;
+}
+
+.gen-btn span {
+  position: relative;
+  z-index: 10;
+  transition: color 1s;
+}
+
+.gen-btn:hover span {
+  color: black;
+}
+
+.gen-btn::before,
+.gen-btn::after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.gen-btn::before {
+  content: "";
+  background: #000;
+  width: 120%;
+  left: -10%;
+  transform: skew(30deg);
+  transition: transform 0.4s cubic-bezier(0.3, 1, 0.8, 1);
+}
+
+.gen-btn:hover::before {
+  transform: translate3d(100%, 0, 0);
+}
+
+h1 {
+  color: #37b7c3;
+}
+
+.authorQuotes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.oneQuote {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+}
+
+.oneQuoteContent {
+  color: #F8F4E1;
+}
+
+.quoteBox {
+  background-color: #77b0aa;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+form input {
+  padding: 15px 0px 15px 20px;
+  margin-right: 20px;
+  border: none;
+  color: black;
+  border-radius: 40px;
+}
+
+form button {
+  transition-duration: 0.4s;
+  position: absolute;
+  padding: 13px;
+  right: 57px;
+  bottom: 40px;
+  background-color: white;
+  border: none;
+  border-radius: 40px;
+}
+
+form button:hover {
+  background-color: #37b7c3; /* Green */
+  color: white;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px;
+  background-color: #071952;
+  position: relative;
+}
+
+nav input {
+  margin-right: 100px;
+}
+
+.main {
+  margin-left: auto;
+  padding: 30px;
+  margin-bottom: 50px;
+  border-radius: 30px;
+  margin-right: auto;
+  display: flex;
+  width: 50%;
+  color: #071952;
+  background-color: #973131;
+  flex-direction: column;
+  margin-top: 100px;
+  gap: 30px;
+  align-items: center;
+}
+
+.main p {
+  text-align: center;
+  color: #f3ff90;
+}

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
+import "./App.css";
 
 export default function App() {
-  const [quote, setQuote] = useState({ content: "", author: "" });
+  const [quote, setQuote] = useState({ content: "", author: "~" });
   const [authorQuotes, setAuthorQuotes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [author, setAuthor] = useState("");
@@ -32,11 +33,10 @@ export default function App() {
         const res = await axios.get(
           `https://api.quotable.io/quotes?author=${encodedAuthor}`
         );
-        setAuthorQuotes(res.data.results);
+        setAuthorQuotes(res.data.results.slice(0,6));
         if (res.data.results.length === 0) {
           setError(`No quotes found for "${author}".`);
         }
-        // Clear the single quote state to prevent showing random quote after search
         setAuthor("");
         setQuote({ content: "", author: "" });
       } else {
@@ -51,48 +51,58 @@ export default function App() {
   };
 
   const handleGenerateClick = () => {
-    setAuthorQuotes([]); // Clear authorQuotes array
+    setAuthorQuotes([]);
     if (author.trim() === "") {
       getOneQuote();
     } else {
-      setQuote({ content: "", author: "" }); // Reset to empty to trigger random quote fetch
+      setQuote({ content: "", author: "" });
     }
   };
 
   return (
     <div>
-      <h1>Random Quote Generator</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={author}
-          onChange={(e) => setAuthor(e.target.value)}
-          placeholder="Search Author Name"
-        />
-        <button type="submit">Search</button>
-      </form>
-      <button onClick={handleGenerateClick} disabled={loading}>
-        Generate
-      </button>
-      {loading ? (
-        <p>Loading...</p>
-      ) : error ? (
-        <p>{error}</p>
-      ) : authorQuotes.length > 0 ? (
-        <div>
-          {authorQuotes.map((q) => (
-            <div key={q._id}>
-              <div>{q.content}</div>
-              <p>{q.author}</p>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div>
-          <div>{quote.content}</div>
-          <p>{quote.author}</p>
-        </div>
-      )}
+      <nav>
+        <h1>Random Quote Generator</h1>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            value={author}
+            onChange={(e) => setAuthor(e.target.value)}
+            placeholder="Author Name"
+          />
+          <button type="submit">🔍</button>
+        </form>
+      </nav>
+      <div className="main">
+        {loading ? (
+          <p>Loading...</p>
+        ) : error ? (
+          <p>{error}</p>
+        ) : authorQuotes.length > 0 ? (
+          <div className="authorQuotes">
+            {authorQuotes.map((q) => (
+              <div key={q._id} className="quoteBox">
+                <div>{q.content}</div>
+                <p>{q.author}</p>
+              </div>
+            ))}
+          </div>
+        ) : quote.content !== "" ? (
+          <div className="oneQuote">
+            <div className="oneQuoteContent">{quote.content}</div>
+            <p>{quote.author}</p>
+          </div>
+        ) : (
+          <p>Click Generate to Start</p>
+        )}
+        <button
+          className="gen-btn"
+          onClick={handleGenerateClick}
+          disabled={loading}
+        >
+          <span>Generate</span>
+        </button>
+      </div>
     </div>
   );
 }
