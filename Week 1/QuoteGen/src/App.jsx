@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { getOneQuote, getQuotesByAuthor } from './backend.js';
 import "./App.css";
 
 export default function App() {
@@ -9,53 +9,39 @@ export default function App() {
   const [author, setAuthor] = useState("");
   const [error, setError] = useState("");
 
-  const getOneQuote = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const res = await axios.get("https://api.quotable.io/random");
-      setQuote({ content: res.data.content, author: res.data.author });
-    } catch (err) {
-      setError("Failed to fetch or save quote.");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
     setError("");
+
     try {
-      if (author.trim() !== "") {
-        const encodedAuthor = encodeURIComponent(author.trim());
-        const res = await axios.get(
-          `https://api.quotable.io/quotes?author=${encodedAuthor}`
-        );
-        setAuthorQuotes(res.data.results.slice(0,6));
-        if (res.data.results.length === 0) {
-          setError(`No quotes found for "${author}".`);
-        }
-        setAuthor("");
-        setQuote({ content: "", author: "" });
-      } else {
-        setError("Please enter an author name.");
-      }
+      const quotes = await getQuotesByAuthor(author);
+      setAuthorQuotes(quotes);
+      setAuthor("");
+      setQuote({ content: "", author: "" });
     } catch (err) {
-      setError("Failed to fetch quotes by author.");
-      console.error(err);
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGenerateClick = () => {
+  const handleGenerateClick = async () => {
     setAuthorQuotes([]);
-    if (author.trim() === "") {
-      getOneQuote();
-    } else {
-      setQuote({ content: "", author: "" });
+    setLoading(true);
+    setError("");
+
+    try {
+      if (author.trim() === "") {
+        const newQuote = await getOneQuote();
+        setQuote(newQuote);
+      } else {
+        setQuote({ content: "", author: "" });
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
