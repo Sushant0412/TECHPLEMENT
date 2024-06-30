@@ -77,7 +77,7 @@ h1 {
 }
 
 .oneQuoteContent {
-  color: #F8F4E1;
+  color: #f8f4e1;
 }
 
 .quoteBox {
@@ -143,4 +143,81 @@ nav input {
 .main p {
   text-align: center;
   color: #f3ff90;
+}
+
+@media (max-width: 1200px) {
+  .main {
+    width: 70%;
+  }
+
+  form input {
+    width: 60%;
+  }
+}
+
+@media (max-width: 992px) {
+  .main {
+    width: 80%;
+  }
+
+  form input {
+    width: 50%;
+  }
+
+  form button {
+    right: 30px;
+    bottom: 40px;
+    
+  }
+}
+
+@media (max-width: 768px) {
+  .main {
+    width: 90%;
+  }
+
+  form input {
+    width: calc(100% - 70px);
+    margin-right: 10px;
+  }
+
+  form button {
+    right: 15px;
+    bottom: 20px;
+  }
+
+  nav {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  nav input {
+    margin-right: 0;
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  .main {
+    width: 95%;
+  }
+
+  nav {
+    align-items: center;
+  }
+
+  form button {
+    right: 15px;
+    bottom: 31px;
+    right: 50px;
+  }
+
+  nav input {
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  .authorQuotes {
+    grid-template-columns: 1fr;
+  }
 }
